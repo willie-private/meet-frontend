@@ -1,0 +1,15 @@
+# Netlify config – app uses static export (output: 'export') for manual or Git deploy.
+
+[build]
+  command = "npm run build"
+  publish = "out"
+
+# Redirect old meeting URLs to new short URLs (e.g. /join-meeting/abc-xyz → /abc-xyz)
+[[redirects]]
+  from = "/join-meeting/*"
+  to = "/:splat"
+  status = 301
+  force = true
+
+# Manual deploy: build locally (npm run build), then drag-and-drop the `out` folder
+# in Netlify (Deploys > Deploy manually > Drag and drop).
