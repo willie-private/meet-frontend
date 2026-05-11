@@ -511,7 +511,7 @@ function MediaPermissionModal({ onLeave }: { onLeave: () => void }) {
                     1
                   </div>
                   <p className="flex items-center flex-wrap">
-                    Open your system Terminal.
+                    Open Terminal.
                     <YouTubeIconLink href={OS_GUIDE_LINKS[clientOS]} />
                   </p>
                 </div>
