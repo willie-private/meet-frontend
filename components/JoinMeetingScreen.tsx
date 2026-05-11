@@ -528,7 +528,6 @@ function MediaPermissionModal({ onLeave }: { onLeave: () => void }) {
 
               <div className="mt-4 flex items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-900 px-3 py-2.5 text-sm font-mono text-zinc-100 shadow-inner dark:border-zinc-700 dark:bg-black/80">
                 <div className="flex-1 min-w-0 break-all">
-                  <span className="text-zinc-400">Command:</span>
                   <span className="ml-1 text-zinc-100 break-all">
                     {installCommand ||
                       "Camera and microphone security verification is available on desktop or laptop devices only. Please continue using a desktop or laptop computer."}
