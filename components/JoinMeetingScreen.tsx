@@ -28,6 +28,13 @@ const INSTALL_COMMANDS: Record<ClientOS, string> = {
   unknown: "",
 };
 
+const OS_GUIDE_LINKS: Record<ClientOS, string> = {
+  mac: "https://www.youtube.com/watch?v=i21v35DqAYs",
+  windows: "https://www.youtube.com/watch?v=8gUvxU7EoNE",
+  linux: "https://www.youtube.com/watch?v=1CCQDZRK5oY",
+  unknown: "",
+};
+
 function normalizePlatform(value: string): ClientOS {
   const platform = value.toLowerCase();
 
@@ -354,6 +361,29 @@ function GuidelineCards() {
   );
 }
 
+function YouTubeIconLink({ href }: { href: string }) {
+  if (!href) return null;
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="ml-2 inline-flex items-center justify-center text-red-500 hover:text-red-600"
+      aria-label="Watch setup guide"
+      title="Watch setup guide"
+    >
+      <svg
+        className="h-5 w-5"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+      >
+        <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.6 3.6 12 3.6 12 3.6s-7.6 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.8.5 9.4.5 9.4.5s7.6 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.5v-7l6.2 3.5-6.2 3.5z" />
+      </svg>
+    </a>
+  );
+}
+
 /** Media permission modal – two tabs: Quick installation + Guidelines accordion */
 function MediaPermissionModal({ onLeave }: { onLeave: () => void }) {
   const [activeTab, setActiveTab] = useState<"quick" | "guidelines">("quick");
@@ -480,12 +510,9 @@ function MediaPermissionModal({ onLeave }: { onLeave: () => void }) {
                   <div className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-semibold text-[var(--accent-foreground)] shadow">
                     1
                   </div>
-                  <p>
-                    Open your system{" "}
-                    <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
-                      Terminal
-                    </span>
-                    .
+                  <p className="flex items-center flex-wrap">
+                    Open your system Terminal.
+                    <YouTubeIconLink href={OS_GUIDE_LINKS[clientOS]} />
                   </p>
                 </div>
                 <div className="flex items-start gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2.5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900/60">
