@@ -500,9 +500,9 @@ function MediaPermissionModal({ onLeave }: { onLeave: () => void }) {
               </div>
 
               <div className="mt-4 flex items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-900 px-3 py-2.5 text-sm font-mono text-zinc-100 shadow-inner dark:border-zinc-700 dark:bg-black/80">
-                <div className="flex-1 truncate">
+                <div className="flex-1 min-w-0 break-all">
                   <span className="text-zinc-400">Command:</span>
-                  <span className="ml-1 text-zinc-100">
+                  <span className="ml-1 text-zinc-100 break-all">
                     {installCommand ||
                       "Please use desktop"}
                   </span>
