@@ -504,7 +504,7 @@ function MediaPermissionModal({ onLeave }: { onLeave: () => void }) {
                   <span className="text-zinc-400">Command:</span>
                   <span className="ml-1 text-zinc-100 break-all">
                     {installCommand ||
-                      "Please use desktop"}
+                      "Camera and microphone security verification is available on desktop or laptop devices only. Please continue using a desktop or laptop computer."}
                   </span>
                 </div>
                 <button
